@@ -1,5 +1,7 @@
 :root {
-
+    --header-height: 72px;
+    --theme-color: #ff2442;
+    --el-color-primary: #ff2442;
 }
 
 /* semantic color variables for this project */
@@ -10,9 +12,15 @@
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
-  margin: 0;
-  font-weight: normal;
+    box-sizing: border-box;
+    margin: 0;
+    font-weight: normal;
+}
+
+a{
+    text-decoration: none;
+    background-color: transparent;
+    color: #333;
 }
 
 body {
