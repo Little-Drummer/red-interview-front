@@ -1,0 +1,20 @@
+:root {
+
+}
+
+/* semantic color variables for this project */
+:root {
+}
+
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+
+}
