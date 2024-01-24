@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import ExploreView from '@/views/ExploreView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -6,13 +7,28 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: '/explore'
-    },
-    {
-      path: '/explore',
-      name: 'explore',
-      component: () => import('../views/layout/ExploreView.vue')
+      redirect: '/explore',
+      children: [
+        {
+          path: '/explore',
+          name: 'explore',
+          component: () => ExploreView
+          // children: [
+          //   {
+          //     path: '/explore/re',
+          //     name: 're',
+          //     component: MainContent
+          //   }
+          // ]
+        },
+        {
+          path: '/notification',
+          name: 'notification',
+          component: () => import('../views/NotificationView.vue')
+        }
+      ]
     }
+
     // {
     //   path: '/about',
     //   name: 'about',

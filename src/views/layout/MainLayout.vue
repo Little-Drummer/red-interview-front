@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ExploreHeader from '@/components/header/ExploreHeader.vue'
+import HeaderContainer from '@/components/header/HeaderContainer.vue'
 import SideBar from '@/components/side-bar/SideBar.vue'
 import BottomBar from '@/components/side-bar/BottomBar.vue'
 </script>
@@ -8,18 +8,20 @@ import BottomBar from '@/components/side-bar/BottomBar.vue'
   <div class="common-layout">
     <el-container>
       <el-header>
-        <explore-header />
+        <header-container />
       </el-header>
       <el-container>
         <el-row>
           <el-col :xs="0" :sm="0" :md="24" :lg="24" :xl="24">
-            <!--            <el-aside width="266px">-->
+            <!--            <el-aside width="266.66px">-->
             <side-bar />
             <!--            </el-aside>-->
           </el-col>
         </el-row>
         <el-main>
-          <div class="main"></div>
+          <!--          <div class="main">123</div>-->
+
+          <router-view></router-view>
         </el-main>
       </el-container>
       <el-affix position="bottom" :offset="0" target="body">
@@ -32,9 +34,6 @@ import BottomBar from '@/components/side-bar/BottomBar.vue'
 </template>
 
 <style scoped lang="less">
-//.main {
-//  height: 200vh;
-//}
 .el-header {
   display: flex;
   flex-direction: column;
@@ -47,5 +46,8 @@ import BottomBar from '@/components/side-bar/BottomBar.vue'
   top: 0;
   z-index: 10;
   align-items: center;
+}
+.el-main {
+  padding: 0;
 }
 </style>
