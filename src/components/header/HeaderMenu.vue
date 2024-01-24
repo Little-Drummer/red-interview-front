@@ -1,25 +1,21 @@
 <script setup lang="ts">
-import { TopRight } from '@element-plus/icons-vue'
+import DropDownItem from '@/components/header/DropDownItem.vue'
 </script>
 
 <template>
   <div class="header-menu">
     <el-dropdown
       popper-class="dropdown-nav"
-      trigger="click"
+      trigger="hover"
       class="header-menu-but"
       :teleported="false"
     >
       <span class="el-dropdown-link">创作中心</span>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item>
-            <a href="#">创作服务</a>
-          </el-dropdown-item>
-          <el-dropdown-item><a href="#">直播管理</a></el-dropdown-item>
-          <el-dropdown-item>
-            <a href="#">电脑直播助手</a>
-          </el-dropdown-item>
+          <drop-down-item content="创作服务" />
+          <drop-down-item content="直播管理" />
+          <drop-down-item content="电脑直播助手" />
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -27,24 +23,10 @@ import { TopRight } from '@element-plus/icons-vue'
       <span class="el-dropdown-link">业务合作</span>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item>
-            <a href="#">专业号</a>
-            <el-icon>
-              <top-right />
-            </el-icon>
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <a href="#">推广合作</a>
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <a href="#">蒲公英</a>
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <a href="#">商家入驻</a>
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <a href="#">MCN入住</a>
-          </el-dropdown-item>
+          <drop-down-item content="推广合作" />
+          <drop-down-item content="蒲公英" />
+          <drop-down-item content="商家入驻" />
+          <drop-down-item content="MCN入住" />
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -65,6 +47,13 @@ import { TopRight } from '@element-plus/icons-vue'
     &:hover {
       background-color: @but-hover-color;
     }
+    .el-dropdown-link {
+      &:hover,
+      &:focus {
+        outline: none;
+        cursor: pointer;
+      }
+    }
     ::v-deep(.dropdown-nav) {
       //border-radius: 999px;
       background-color: #f7f7f7;
@@ -83,6 +72,7 @@ import { TopRight } from '@element-plus/icons-vue'
             height: 40px;
             color: inherit;
             font-size: 16px;
+            justify-content: space-between;
             &:hover {
               background-color: #f7f7f7;
               color: #333;
@@ -98,9 +88,9 @@ import { TopRight } from '@element-plus/icons-vue'
         //  }
         //}
       }
-      //span {
-      //  display: none;
-      //}
+      span {
+        display: none;
+      }
       a {
         color: inherit;
       }

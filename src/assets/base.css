@@ -2,11 +2,9 @@
     --header-height: 72px;
     --theme-color: #ff2442;
     --el-color-primary: #ff2442;
+    --max-width: 1728px;
 }
 
-/* semantic color variables for this project */
-:root {
-}
 
 
 *,
@@ -14,7 +12,11 @@
 *::after {
     box-sizing: border-box;
     margin: 0;
+    padding: 0;
     font-weight: normal;
+}
+ul,li{
+    list-style: none;
 }
 
 a{

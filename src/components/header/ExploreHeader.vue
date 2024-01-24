@@ -14,19 +14,23 @@ import HeaderMenu from '@/components/header/HeaderMenu.vue'
     <div class="input-box">
       <header-search />
     </div>
-    <div class="right"><header-menu /></div>
+    <el-row>
+      <el-col :xs="0" :sm="0" :md="24" :lg="24" :xl="24">
+        <div class="right"><header-menu /></div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <style scoped lang="less">
 @header-search-height: 40px;
 .explore-header {
-  position: relative;
+  position: fixed;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  //max-width: var(--430e6aaa);
+  width: 100vw;
+  max-width: var(--max-width);
   height: var(--header-height);
   padding: 0 32px;
   z-index: 10;
@@ -35,6 +39,7 @@ import HeaderMenu from '@/components/header/HeaderMenu.vue'
     width: 67px;
     aspect-ratio: auto 67 / 24;
     height: 24px;
+    //position: fixed;
     img {
       width: 67px;
       aspect-ratio: auto 67 / 24;
