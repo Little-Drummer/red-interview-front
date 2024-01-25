@@ -1,14 +1,22 @@
 <script setup lang="ts">
 import sideBarItem from '@/components/side-bar/SideBarItem.vue'
-import router from '@/router'
 import SolarHomeSmileAngleLinear from '@/components/icon/SolarHomeSmileAngleLinear.vue'
 import TablerSquareRoundedPlus from '@/components/icon/TablerSquareRoundedPlus.vue'
 import BxBell from '@/components/icon/BxBell.vue'
 import UserAvatar from '@/components/side-bar/UserAvatar.vue'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
-const currentRoute = router.currentRoute.value.path
-// import { ref } from 'vue'
-console.log(currentRoute)
+const router = useRoute()
+const currentRoute = ref('')
+
+watch(
+  () => router.path,
+  (to) => {
+    currentRoute.value = to
+  }
+)
+
 const sideBarItemContent = [
   {
     icon: SolarHomeSmileAngleLinear,
@@ -89,6 +97,7 @@ const sideBarItemContent = [
       cursor: pointer;
       margin-bottom: 8px;
       color: rgba(51, 51, 51, 0.6);
+
       &:hover {
         background-color: @color-active-background;
       }

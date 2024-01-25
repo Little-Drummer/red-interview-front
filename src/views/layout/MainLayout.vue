@@ -20,8 +20,9 @@ import BottomBar from '@/components/side-bar/BottomBar.vue'
         </el-row>
         <el-main>
           <!--          <div class="main">123</div>-->
-
-          <router-view></router-view>
+          <div class="main-content with-side-bar">
+            <router-view></router-view>
+          </div>
         </el-main>
       </el-container>
       <el-affix position="bottom" :offset="0" target="body">
@@ -47,7 +48,34 @@ import BottomBar from '@/components/side-bar/BottomBar.vue'
   z-index: 10;
   align-items: center;
 }
+
 .el-main {
   padding: 0;
+  .main-content {
+    width: 100%;
+  }
+  @media screen and (min-width: 1728px) {
+    .main-content.with-side-bar {
+      padding-left: 282.66667px;
+    }
+  }
+
+  @media screen and (min-width: 1424px) and (max-width: 1727px) {
+    .main-content.with-side-bar {
+      padding-left: calc(-5.33333px + 16.66667vw);
+    }
+  }
+
+  @media screen and (min-width: 1192px) and (max-width: 1423px) {
+    .main-content.with-side-bar {
+      padding-left: calc(-4.8px + 20vw);
+    }
+  }
+
+  @media screen and (min-width: 960px) and (max-width: 1191px) {
+    .main-content.with-side-bar {
+      padding-left: calc(-6px + 25vw);
+    }
+  }
 }
 </style>

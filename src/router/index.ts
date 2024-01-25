@@ -7,26 +7,17 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: '/explore',
-      children: [
-        {
-          path: '/explore',
-          name: 'explore',
-          component: () => ExploreView
-          // children: [
-          //   {
-          //     path: '/explore/re',
-          //     name: 're',
-          //     component: MainContent
-          //   }
-          // ]
-        },
-        {
-          path: '/notification',
-          name: 'notification',
-          component: () => import('../views/NotificationView.vue')
-        }
-      ]
+      redirect: '/explore'
+    },
+    {
+      path: '/explore',
+      name: 'explore',
+      component: ExploreView
+    },
+    {
+      path: '/notification',
+      name: 'notification',
+      component: () => import('../views/NotificationView.vue')
     }
 
     // {
