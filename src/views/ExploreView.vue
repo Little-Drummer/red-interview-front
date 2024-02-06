@@ -6,7 +6,47 @@ import FeedsContainer from '@/components/explore/FeedsContainer.vue'
 <template>
   <div id="mfContainer" class="feeds-page">
     <channel-container />
-    <feeds-container />
+    <Transition mode="out-in">
+      <KeepAlive>
+        <Suspense>
+          <feeds-container />
+          <template #fallback>
+            <el-skeleton
+              :animated="true"
+              :loading="true"
+              :rows="5"
+              style="display: flex; flex-wrap: wrap"
+            >
+              <template #template>
+                <div
+                  v-for="item in 15"
+                  :key="item"
+                  style="display: flex; height: 320px; flex-direction: column; margin-right: 24px"
+                >
+                  <el-skeleton-item variant="image" style="width: 250px; height: 364px">
+                  </el-skeleton-item>
+                  <div style="padding: 14px">
+                    <el-skeleton-item variant="h3" style="width: 50%" />
+                    <div
+                      style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        margin-top: 16px;
+                        height: 16px;
+                      "
+                    >
+                      <el-skeleton-item variant="text" style="margin-right: 16px" />
+                      <el-skeleton-item variant="text" style="width: 30%" />
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </el-skeleton>
+          </template>
+        </Suspense>
+      </KeepAlive>
+    </Transition>
   </div>
 </template>
 

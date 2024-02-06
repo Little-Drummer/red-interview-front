@@ -13,7 +13,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    scrollbar-width: none;
+    /*scrollbar-width: none;*/
     font-weight: normal;
 }
 
@@ -29,9 +29,9 @@ a {
 
 body {
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji, BlinkMacSystemFont, Helvetica Neue, Arial, PingFang SC, PingFang TC, PingFang HK, Microsoft Yahei, Microsoft JhengHei;
-
-    *::-webkit-scrollbar, &::-webkit-scrollbar {
-        width: 0;
-        height: 0;
-    }
+    overflow: hidden;
+    /**::-webkit-scrollbar, &::-webkit-scrollbar {*/
+    /*    width: 0;*/
+    /*    height: 0;*/
+    /*}*/
 }

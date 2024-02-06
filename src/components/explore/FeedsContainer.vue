@@ -1,47 +1,52 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import 'vue-waterfall-plugin-next/dist/style.css'
+// import { getPhotoService } from '@/api/unsplash.ts'
+// import { ref, onMounted } from 'vue'
+// import blurHashToImageSrc from '@/utils/blruHashToImageSrc.ts'
+import WaterFall from '@/components/explore/WaterFall.vue'
+
+// interface PhotoItem {
+//   id: string
+//   name: string
+//   src: string
+//   blur_hash: string
+// }
+//
+// const currentPage = ref(1)
+// const keyWord = ref('beautiful girl')
+// const pageSize = ref(30)
+//
+// const unsplash_photos = await getPhotoService(keyWord.value, pageSize.value, currentPage.value)
+// console.log(unsplash_photos)
+// const list = ref<PhotoItem[]>([])
+// onMounted(async () => {
+//   list.value = unsplash_photos.results.map((item, index) => {
+//     return {
+//       id: item.id,
+//       name: item.alt_description,
+//       src: item.urls.small,
+//       blur_hash: blurHashToImageSrc(item.blur_hash, item.width, item.height)
+//     }
+//   })
+//   console.log(list)
+// })
+</script>
 
 <template>
   <div id="exploreFeeds" class="feeds-container">
-    <section class="note-item" v-for="i in 10" :key="i">
-      <div>
-        <a href="" class="cover ld mask" :style="{ height: '334px', backgroundColor: 'red' }">
-          {{ i }}
-        </a>
-      </div>
-    </section>
+    <water-fall />
   </div>
 </template>
 
 <style scoped lang="less">
 .feeds-container {
-  background-color: gray;
+  //background-color: gray;
   width: 100%;
-  height: 1735px;
+  height: 100vh;
   visibility: visible;
 
   position: relative;
   transition: width 0.5s;
   margin: 0 auto;
-}
-
-.note-item {
-  --1e87e864: 250.66666666666666px;
-  --6afaa17e: 16px;
-  --1719550c: blur(42.5px);
-  //transform: translate(0px, 0px);
-  //position: absolute;
-  left: 0;
-  top: 0;
-  width: var(--1e87e864);
-  .cover {
-    position: relative;
-    width: var(--1e87e864);
-    display: flex;
-    border-radius: var(--6afaa17e);
-    overflow: hidden;
-    box-shadow: 0 0 0 1px var(--color-border);
-    transition: background 0.2s;
-    transform: translateZ(0);
-  }
 }
 </style>
