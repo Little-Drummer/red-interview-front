@@ -1,55 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-
-const props = defineProps({
-  noteList: {
-    type: Array,
-    default: () => []
+import type { Post } from '@/type/noteType.ts'
+// const props = defineProps({
+//   noteList: Object as PropType<Post[]>
+// })
+const props = withDefaults(
+  defineProps<{
+    noteList: Post[]
+    gap?: number
+  }>(),
+  {
+    gap: () => 32
   }
-})
-
-const testData = ref([
-  { id: 1, color: 'red', height: '100px' },
-  { id: 2, color: 'blue', height: '200px' },
-  { id: 3, color: 'green', height: '300px' },
-  { id: 4, color: 'yellow', height: '165px' },
-  { id: 5, color: 'purple', height: '245px' },
-  { id: 6, color: 'orange', height: '140px' },
-  { id: 7, color: 'pink', height: '280px' },
-  { id: 8, color: 'brown', height: '185px' },
-  { id: 9, color: 'gray', height: '320px' },
-  { id: 10, color: 'teal', height: '90px' },
-  { id: 11, color: 'maroon', height: '230px' },
-  { id: 12, color: 'navy', height: '120px' },
-  { id: 13, color: 'olive', height: '350px' },
-  { id: 14, color: 'lime', height: '210px' },
-  { id: 15, color: 'fuchsia', height: '260px' },
-  { id: 16, color: 'aqua', height: '175px' },
-  { id: 17, color: 'silver', height: '300px' },
-  { id: 18, color: 'black', height: '200px' },
-  { id: 19, color: 'white', height: '150px' },
-  { id: 20, color: 'red', height: '100px' },
-  { id: 21, color: 'blue', height: '200px' },
-  { id: 22, color: 'green', height: '300px' },
-  { id: 23, color: 'yellow', height: '165px' },
-  { id: 24, color: 'purple', height: '245px' },
-  { id: 25, color: 'orange', height: '140px' },
-  { id: 26, color: 'pink', height: '280px' },
-  { id: 27, color: 'brown', height: '185px' },
-  { id: 28, color: 'gray', height: '320px' },
-  { id: 29, color: 'teal', height: '90px' },
-  { id: 30, color: 'maroon', height: '230px' },
-  { id: 31, color: 'navy', height: '120px' },
-  { id: 32, color: 'olive', height: '350px' },
-  { id: 33, color: 'lime', height: '210px' },
-  { id: 34, color: 'fuchsia', height: '260px' },
-  { id: 35, color: 'aqua', height: '175px' },
-  { id: 36, color: 'silver', height: '300px' },
-  { id: 37, color: 'black', height: '200px' },
-  { id: 38, color: 'white', height: '150px' }
-])
+)
+// console.log(props.noteList)
 const columnHeights = ref([0, 0, 0, 0, 0])
-const gap = 32
 
 const vWaterfall = (el: HTMLElement) => {
   // const callback = binding.value
@@ -58,11 +23,13 @@ const vWaterfall = (el: HTMLElement) => {
 }
 
 const updateLayout = (item: HTMLElement) => {
-  const minColumn = columnHeights.value.indexOf(Math.min(...columnHeights.value)) // 当前高度最小的列
+  const minColumn = columnHeights.value.indexOf(
+    Math.min(...columnHeights.value)
+  ) // 当前高度最小的列
   const itemTop = columnHeights.value[minColumn] // 当前高度最小的列的高度
   const itemLeft = minColumn * item.clientWidth // 当前高度最小的列的索引 * 列宽
   // console.log(itemLeft)
-  item.style.transform = `translate(${itemLeft + minColumn * gap}px, ${itemTop}px)` // 设置元素位置
+  item.style.transform = `translate(${itemLeft + minColumn * props.gap}px, ${itemTop}px)` // 设置元素位置
   columnHeights.value[minColumn] += item.offsetHeight // 更新当前列的高度
 }
 const isLoading = ref(false)
@@ -71,31 +38,6 @@ const load = () => {
   console.log(123)
   // testData.value.push({ id: 39, color: 'red', height: '100px' })
   // console.log(testData.value)
-  setTimeout(() => {
-    testData.value.push(
-      { id: 39, color: 'red', height: '100px' },
-      { id: 40, color: 'blue', height: '200px' },
-      { id: 41, color: 'green', height: '300px' },
-      { id: 42, color: 'yellow', height: '165px' },
-      { id: 43, color: 'purple', height: '245px' },
-      { id: 44, color: 'orange', height: '140px' },
-      { id: 45, color: 'pink', height: '280px' },
-      { id: 46, color: 'brown', height: '185px' },
-      { id: 47, color: 'gray', height: '320px' },
-      { id: 48, color: 'teal', height: '90px' },
-      { id: 49, color: 'maroon', height: '230px' },
-      { id: 50, color: 'navy', height: '120px' },
-      { id: 51, color: 'olive', height: '350px' },
-      { id: 52, color: 'lime', height: '210px' },
-      { id: 53, color: 'fuchsia', height: '260px' },
-      { id: 54, color: 'aqua', height: '175px' },
-      { id: 55, color: 'silver', height: '300px' },
-      { id: 56, color: 'black', height: '200px' },
-      { id: 57, color: 'white', height: '150px' }
-    )
-    columnHeights.value = [0, 0, 0, 0, 0]
-    isLoading.value = false
-  }, 3000)
 }
 </script>
 
@@ -104,44 +46,166 @@ const load = () => {
   <!--  :infinite-scroll-distance="0"-->
   <!--  :infinite-scroll-disabled="isLoading"-->
   <section
-    v-infinite-scroll="load"
     v-waterfall
     class="note-item"
-    v-for="(item, index) in testData"
+    v-for="(item, index) in noteList"
     :key="index"
-    :style="{ background: item.color, height: item.height }"
   >
-    <p class="test">{{ item.id }}</p>
+    <div>
+      <router-link
+        to="to"
+        :style="{
+          height: '334px',
+          background:
+            'url(' +
+            item.images[0].imageUrl +
+            ') center center / cover no-repeat'
+        }"
+        class="cover mask ld"
+      ></router-link>
+      <div class="footer">
+        <router-link to="to" class="title">
+          <span>{{ item.title }}</span>
+        </router-link>
+        <div class="author-wrapper">
+          <router-link to="to" class="author">
+            <el-avatar
+              :size="20"
+              :src="item.author.profilePictureUrl"
+              class="author-avatar"
+            >
+              <img src="@/assets/author/circle.png" alt="" />
+            </el-avatar>
+            <span class="name">{{ item.author.name }}</span>
+          </router-link>
+          <span class="like-wrapper like-active"> </span>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <style scoped lang="less">
+@note-item-width: 250.66666666px;
+@note-item-border-radius: 16px;
+@note-item-backdrop-filter: blur(42.5px);
+@color-border: rgba(0, 0, 0, 0.08);
+@color-mask-backdrop: rgba(0, 0, 0, 0.25);
+@color-primary-label: #333;
+@color-secondary-label: rbga(51, 51, 51, 0.8);
 .note-item {
-  width: 228.8px;
+  width: @note-item-width;
   position: absolute;
   left: 0;
   top: 0;
-}
 
-//.note-item {
-//  --1e87e864: 250.66666666666666px;
-//  --6afaa17e: 16px;
-//  --1719550c: blur(42.5px);
-//  //transform: translate(0px, 0px);
-//  //position: absolute;
-//  left: 0;
-//  top: 0;
-//  width: var(--1e87e864);
-//
-//  .cover {
-//    position: relative;
-//    width: var(--1e87e864);
-//    display: flex;
-//    border-radius: var(--6afaa17e);
-//    overflow: hidden;
-//    box-shadow: 0 0 0 1px var(--color-border);
-//    transition: background 0.2s;
-//    transform: translateZ(0);
-//  }
-//}
+  .cover {
+    position: relative;
+    width: @note-item-width;
+    display: flex;
+    border-radius: @note-item-border-radius;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px @color-border;
+    transition: background 0.2s;
+    transform: translateZ(0);
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transition: background-color 0.2s;
+      background-color: transparent;
+      border-radius: @note-item-border-radius;
+    }
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: @note-item-backdrop-filter;
+      z-index: 1;
+      transition: all 0.4s;
+      border-radius: @note-item-border-radius;
+    }
+    &.ld:before {
+      background: transparent;
+      backdrop-filter: blur(0);
+    }
+  }
+
+  .mask:hover:after {
+    background-color: @color-mask-backdrop;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translateZ(0);
+    border-radius: @note-item-border-radius;
+  }
+
+  .footer {
+    padding: 12px;
+    .title {
+      margin-bottom: 8px;
+      word-break: break-all;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 140%;
+      color: @color-primary-label;
+    }
+    .author-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 20px;
+      color: @color-secondary-label;
+      font-size: 12px;
+      transition: color 1s;
+      .author {
+        display: flex;
+        align-items: center;
+        color: #999;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 12px;
+        .author-avatar {
+          margin-right: 6px;
+        }
+        .name {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        &:hover {
+          color: @color-primary-label;
+        }
+      }
+      .like-wrapper {
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+      //  .author {
+      //    font-size: 14px;
+      //    color: #fff;
+      //    text-decoration: none;
+      //    transition: color 0.2s;
+      //    &:hover {
+      //      color: #fff;
+      //    }
+      //  }
+    }
+  }
+}
 </style>

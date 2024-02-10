@@ -21,7 +21,9 @@ import BottomBar from '@/components/side-bar/BottomBar.vue'
         <el-main>
           <!--          <div class="main">123</div>-->
           <div class="main-content with-side-bar">
+            <!--            <keep-alive>-->
             <router-view></router-view>
+            <!--            </keep-alive>-->
           </div>
         </el-main>
       </el-container>

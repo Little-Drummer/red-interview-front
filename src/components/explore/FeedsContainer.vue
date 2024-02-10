@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import 'vue-waterfall-plugin-next/dist/style.css'
+// import 'vue-waterfall-plugin-next/dist/style.css'
 // import { getPhotoService } from '@/api/unsplash.ts'
 // import { ref, onMounted } from 'vue'
 // import blurHashToImageSrc from '@/utils/blruHashToImageSrc.ts'
 import WaterFall from '@/components/explore/WaterFall.vue'
+import { getPostsWithImagesAuthorService } from '@/api/posts.ts'
+import type { Post } from '@/type/noteType.ts'
+
+// interface PostItem {
+//   id: string
+//   title: string
+//   content: string
+// }
+
+const postsImageAuthorList: Post[] = await getPostsWithImagesAuthorService()
 
 // interface PhotoItem {
 //   id: string
@@ -34,7 +44,7 @@ import WaterFall from '@/components/explore/WaterFall.vue'
 
 <template>
   <div id="exploreFeeds" class="feeds-container">
-    <water-fall />
+    <water-fall :note-list="postsImageAuthorList" />
   </div>
 </template>
 
