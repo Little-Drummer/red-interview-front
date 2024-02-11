@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Post } from '@/type/noteType.ts'
-// const props = defineProps({
-//   noteList: Object as PropType<Post[]>
-// })
+import FeedsFooter from '@/components/explore/waterfall/footer/FeedsFooter.vue'
 const props = withDefaults(
   defineProps<{
     noteList: Post[]
@@ -63,36 +61,24 @@ const load = () => {
         }"
         class="cover mask ld"
       ></router-link>
-      <div class="footer">
-        <router-link to="to" class="title">
-          <span>{{ item.title }}</span>
-        </router-link>
-        <div class="author-wrapper">
-          <router-link to="to" class="author">
-            <el-avatar
-              :size="20"
-              :src="item.author.profilePictureUrl"
-              class="author-avatar"
-            >
-              <img src="@/assets/author/circle.png" alt="" />
-            </el-avatar>
-            <span class="name">{{ item.author.name }}</span>
-          </router-link>
-          <span class="like-wrapper like-active"> </span>
-        </div>
-      </div>
+      <feeds-footer
+        :title="item.title"
+        :name="item.author.name"
+        :profile-picture-url="item.author.profilePictureUrl"
+        :likes-count="item.likesCount"
+      />
     </div>
   </section>
 </template>
 
 <style scoped lang="less">
+@import '@/assets/var';
 @note-item-width: 250.66666666px;
 @note-item-border-radius: 16px;
 @note-item-backdrop-filter: blur(42.5px);
 @color-border: rgba(0, 0, 0, 0.08);
 @color-mask-backdrop: rgba(0, 0, 0, 0.25);
-@color-primary-label: #333;
-@color-secondary-label: rbga(51, 51, 51, 0.8);
+
 .note-item {
   width: @note-item-width;
   position: absolute;
@@ -146,66 +132,6 @@ const load = () => {
     height: 100%;
     transform: translateZ(0);
     border-radius: @note-item-border-radius;
-  }
-
-  .footer {
-    padding: 12px;
-    .title {
-      margin-bottom: 8px;
-      word-break: break-all;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 140%;
-      color: @color-primary-label;
-    }
-    .author-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 20px;
-      color: @color-secondary-label;
-      font-size: 12px;
-      transition: color 1s;
-      .author {
-        display: flex;
-        align-items: center;
-        color: #999;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        margin-right: 12px;
-        .author-avatar {
-          margin-right: 6px;
-        }
-        .name {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-        &:hover {
-          color: @color-primary-label;
-        }
-      }
-      .like-wrapper {
-        position: relative;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-      }
-      //  .author {
-      //    font-size: 14px;
-      //    color: #fff;
-      //    text-decoration: none;
-      //    transition: color 0.2s;
-      //    &:hover {
-      //      color: #fff;
-      //    }
-      //  }
-    }
   }
 }
 </style>
