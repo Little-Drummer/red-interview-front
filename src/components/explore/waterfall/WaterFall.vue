@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { Post } from '@/type/noteType.ts'
+import { computed, ref } from 'vue'
+import type { PostPage } from '@/type/noteType.ts'
 import FeedsFooter from '@/components/explore/waterfall/footer/FeedsFooter.vue'
 const props = withDefaults(
   defineProps<{
-    noteList: Post[]
+    noteListPage: PostPage
     gap?: number
   }>(),
   {
     gap: () => 32
   }
 )
-// console.log(props.noteList)
+const noteList = computed(() => props.noteListPage.records)
 const columnHeights = ref([0, 0, 0, 0, 0])
 
 const vWaterfall = (el: HTMLElement) => {
@@ -30,13 +30,6 @@ const updateLayout = (item: HTMLElement) => {
   item.style.transform = `translate(${itemLeft + minColumn * props.gap}px, ${itemTop}px)` // 设置元素位置
   columnHeights.value[minColumn] += item.offsetHeight // 更新当前列的高度
 }
-const isLoading = ref(false)
-const load = () => {
-  isLoading.value = true
-  console.log(123)
-  // testData.value.push({ id: 39, color: 'red', height: '100px' })
-  // console.log(testData.value)
-}
 </script>
 
 <template>
@@ -46,8 +39,9 @@ const load = () => {
   <section
     v-waterfall
     class="note-item"
-    v-for="(item, index) in noteList"
-    :key="index"
+    v-for="item in noteList"
+    :key="item.postId"
+    v-memo="item.postId"
   >
     <div>
       <router-link
@@ -66,6 +60,7 @@ const load = () => {
         :name="item.author.name"
         :profile-picture-url="item.author.profilePictureUrl"
         :likes-count="item.likesCount"
+        :is-like="false"
       />
     </div>
   </section>

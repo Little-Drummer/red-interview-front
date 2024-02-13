@@ -28,4 +28,12 @@ interface Post {
   updatedAt: string // 可能应该是 Date 类型，根据需要进行转换
 }
 
-export type { Author, Image, Post }
+interface PostPage {
+  pageNumber: number
+  pageSize: number
+  records: Post[]
+  totalPage: number
+  totalRow: number
+}
+
+export type { Author, Image, Post, PostPage }

@@ -65,12 +65,5 @@ import FeedsContainer from '@/components/explore/FeedsContainer.vue'
 .feeds-page {
   //overflow-y: scroll;
   padding: 72px 32px 0;
-
-  .test {
-    //overflow: hidden;
-    //display: block;
-    //height: 1000px;
-    background-color: #fff;
-  }
 }
 </style>

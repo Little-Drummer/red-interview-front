@@ -16,7 +16,7 @@ const props = withDefaults(
 <template>
   <span class="like-wrapper like-active" @click="$emit('changeLike')">
     <Icon
-      v-if="isLike"
+      v-if="!isLike"
       icon="mdi-light:heart"
       :width="16"
       class="reds-icon like-icon"

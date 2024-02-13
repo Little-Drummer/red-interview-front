@@ -1,46 +1,40 @@
 <script setup lang="ts">
 import WaterFall from '@/components/explore/waterfall/WaterFall.vue'
-import { getPostsWithImagesAuthorService } from '@/api/posts.ts'
-import type { Post } from '@/type/noteType.ts'
+import { getPostsWithImagesAuthorPageService } from '@/api/posts.ts'
+import type { PostPage } from '@/type/noteType.ts'
+import { ref } from 'vue'
+const pageSize = 15
+const pageNumber = ref(1)
+const postsImageAuthorList = ref({} as PostPage)
+postsImageAuthorList.value = await getPostsWithImagesAuthorPageService(
+  pageNumber.value,
+  pageSize
+)
+console.log(postsImageAuthorList)
 
-const postsImageAuthorList: Post[] = await getPostsWithImagesAuthorService()
-
-// interface PhotoItem {
-//   id: string
-//   name: string
-//   src: string
-//   blur_hash: string
-// }
-//
-// const currentPage = ref(1)
-// const keyWord = ref('beautiful girl')
-// const pageSize = ref(30)
-//
-// const unsplash_photos = await getPhotoService(keyWord.value, pageSize.value, currentPage.value)
-// console.log(unsplash_photos)
-// const list = ref<PhotoItem[]>([])
-// onMounted(async () => {
-//   list.value = unsplash_photos.results.map((item, index) => {
-//     return {
-//       id: item.id,
-//       name: item.alt_description,
-//       src: item.urls.small,
-//       blur_hash: blurHashToImageSrc(item.blur_hash, item.width, item.height)
-//     }
-//   })
-//   console.log(list)
-// })
+const isLoading = ref(false)
+const load = async () => {
+  pageNumber.value++
+  let postPage = await getPostsWithImagesAuthorPageService(
+    pageNumber.value,
+    pageSize
+  )
+  postsImageAuthorList.value.records.push(...postPage.records)
+  // isLoading.value = true
+  console.log(123)
+  // testData.value.push({ id: 39, color: 'red', height: '100px' })
+  // console.log(testData.value)
+}
 </script>
 
 <template>
-  <div id="exploreFeeds" class="feeds-container">
-    <water-fall :note-list="postsImageAuthorList" />
+  <div id="exploreFeeds" class="feeds-container" v-infinite-scroll="load">
+    <water-fall :note-list-page="postsImageAuthorList" />
   </div>
 </template>
 
 <style scoped lang="less">
 .feeds-container {
-  //background-color: gray;
   width: 100%;
   height: 100vh;
   visibility: visible;
