@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import type { PostPage } from '@/type/noteType.ts'
 import FeedsFooter from '@/components/explore/waterfall/footer/FeedsFooter.vue'
+import Cover from '@/components/explore/waterfall/Cover.vue'
 const props = withDefaults(
   defineProps<{
     noteListPage: PostPage
@@ -44,17 +45,18 @@ const updateLayout = (item: HTMLElement) => {
     v-memo="item.postId"
   >
     <div>
-      <router-link
-        to="to"
-        :style="{
-          height: '334px',
-          background:
-            'url(' +
-            item.images[0].imageUrl +
-            ') center center / cover no-repeat'
-        }"
-        class="cover mask ld"
-      ></router-link>
+      <!--      <router-link-->
+      <!--        to="to"-->
+      <!--        :style="{-->
+      <!--          height: '334px',-->
+      <!--          background:-->
+      <!--            'url(' +-->
+      <!--            item.images[0].imageUrl +-->
+      <!--            ') center center / cover no-repeat'-->
+      <!--        }"-->
+      <!--        class="cover mask ld"-->
+      <!--      ></router-link>-->
+      <cover :image-url="item.images[0].imageUrl" />
       <feeds-footer
         :title="item.title"
         :name="item.author.name"
