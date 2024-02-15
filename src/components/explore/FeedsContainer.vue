@@ -10,7 +10,7 @@ postsImageAuthorList.value = await getPostsWithImagesAuthorPageService(
   pageNumber.value,
   pageSize
 )
-console.log(postsImageAuthorList)
+// console.log(postsImageAuthorList)
 
 const isLoading = ref(false)
 const load = async () => {

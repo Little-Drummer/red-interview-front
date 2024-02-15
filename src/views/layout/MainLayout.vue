@@ -21,9 +21,19 @@ import BottomBar from '@/components/side-bar/BottomBar.vue'
         <el-main>
           <!--          <div class="main">123</div>-->
           <div class="main-content with-side-bar">
-            <!--            <keep-alive>-->
-            <router-view></router-view>
-            <!--            </keep-alive>-->
+            <router-view v-slot="{ Component }">
+              <transition name="fade" mode="out-in">
+                <keep-alive>
+                  <component :is="Component" />
+                </keep-alive>
+              </transition>
+
+              <!--              <keep-alive>-->
+              <!--                <transition name="fade">-->
+              <!--                  <component :is="Component" />-->
+              <!--                </transition>-->
+              <!--              </keep-alive>-->
+            </router-view>
           </div>
         </el-main>
       </el-container>
@@ -53,9 +63,11 @@ import BottomBar from '@/components/side-bar/BottomBar.vue'
 
 .el-main {
   padding: 0;
+
   .main-content {
     width: 100%;
   }
+
   @media screen and (min-width: 1728px) {
     .main-content.with-side-bar {
       padding-left: 282.66667px;

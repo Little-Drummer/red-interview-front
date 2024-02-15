@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ExploreView from '@/views/ExploreView.vue'
+import { useMiscStore } from '@/stores/modules/misc.ts'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,16 +20,31 @@ const router = createRouter({
       name: 'notification',
       component: () => import('../views/NotificationView.vue')
     }
-
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import('../views/AboutView.vue')
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    const MiscStore = useMiscStore()
+    // console.log(to)
+    // if (savedPosition) {
+    //   return savedPosition
     // }
-  ]
+
+    if (to.path === '/explore') {
+      return { top: 1000, behavior: 'smooth', el: '.feeds-page' }
+      // return new Promise((resolve, reject) => {
+      //   setTimeout(() => {
+      //     console.log(MiscStore.feedsScrollPosition, '---------')
+      //     resolve({
+      //       top: 1000,
+      //       behavior: 'smooth',
+      //       el: '.el-main'
+      //     })
+      //   }, 1000)
+      // })
+
+      // return { top: MiscStore.feedsScrollPosition, behavior: 'smooth' }
+    } else return { top: 1000, behavior: 'smooth' }
+  }
+  // }
 })
 
 export default router
