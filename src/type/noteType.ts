@@ -11,6 +11,8 @@ interface Image {
   imageId: number
   postId: number
   imageUrl: string
+  imageHeight: string
+  imageWidth: string
   createdAt: string // 可能应该是 Date 类型，根据需要进行转换
 }
 

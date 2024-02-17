@@ -4,22 +4,14 @@ import FeedsContainer from '@/components/explore/FeedsContainer.vue'
 import { onActivated, onDeactivated } from 'vue'
 import { useMiscStore } from '@/stores/modules/misc.ts'
 
-// console.log(useMiscStore)
-
 const MiscStore = useMiscStore()
-console.log(MiscStore.feedsScrollPosition)
 onDeactivated(() => {
-  // console.log('deactivated')
-  // console.log(document.getElementById('exploreFeeds')?.scrollTop)
-  // console.log(document.getElementsByClassName('el-main')[0]?.scrollTop)
   let scrollTop = document.getElementsByClassName('el-main')[0]?.scrollTop
   MiscStore.changeFeedsScrollPosition(scrollTop ? scrollTop : 0)
 })
 onActivated(() => {
   let element = document.getElementsByClassName('el-main')[0]
   element.scroll(0, MiscStore.feedsScrollPosition)
-  // element.scrollTop = MiscStore.feedsScrollPosition
-  // console.log('activated')
 })
 </script>
 
