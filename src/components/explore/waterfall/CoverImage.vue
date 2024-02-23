@@ -51,10 +51,10 @@ onMounted(async () => {
 <template>
   <router-link
     ref="cover"
-    to="to"
     :style="coverStyle"
     class="cover mask"
     :class="{ ld: isImageLoaded }"
+    to=""
   ></router-link>
 </template>
 

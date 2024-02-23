@@ -3,7 +3,10 @@ import { computed, ref } from 'vue'
 import type { PostPage } from '@/type/noteType.ts'
 import FeedsFooter from '@/components/explore/waterfall/footer/FeedsFooter.vue'
 import CoverImage from '@/components/explore/waterfall/CoverImage.vue'
+import PostDetail from '@/views/posts/PostDetail.vue'
+import PostMask from '@/components/explore/PostMask.vue'
 
+const showDetail = ref(false)
 const props = withDefaults(
   defineProps<{
     noteListPage: PostPage
@@ -48,6 +51,29 @@ const updateNoMore = (item: HTMLElement) => {
   // console.log(itemTop)
   item.style.transform = `translate(0px,${itemTop}px)`
 }
+
+const PostDetailId = ref<number>(0)
+const goPostDetail = (el: PointerEvent, postId: number) => {
+  document.startViewTransition(() => {
+    window.history.pushState({}, '', `/explore/${postId}`)
+    // 更改文章ID
+    PostDetailId.value = postId
+    console.log('goDetail', postId)
+    // router.push({
+    //   name: 'postDetail',
+    //   params: {
+    //     postId: postId
+    //   }
+    // })
+    showDetail.value = true
+  })
+}
+const ClickOutSide = () => {
+  document.startViewTransition(() => {
+    window.history.pushState({}, '', '/explore')
+    showDetail.value = false
+  })
+}
 </script>
 
 <template>
@@ -60,6 +86,7 @@ const updateNoMore = (item: HTMLElement) => {
   >
     <div>
       <cover-image
+        @click="goPostDetail($event, item.postId)"
         :image-url="item.images[0].imageUrl"
         :height="Number.parseInt(item.images[0].imageHeight) / 5"
       />
@@ -73,12 +100,25 @@ const updateNoMore = (item: HTMLElement) => {
     </div>
   </section>
   <p v-if="isNoMore" class="no-more" v-waterfall>没有更多了</p>
+  <teleport to=".main-content">
+    <!--    <transition name="fade" mode="out-in">-->
+    <post-mask v-if="showDetail">
+      <template #default>
+        <post-detail
+          :postId="PostDetailId"
+          @clickOutside="ClickOutSide"
+        ></post-detail>
+      </template>
+    </post-mask>
+    <!--    </transition>-->
+  </teleport>
 </template>
 
 <style scoped lang="less">
 @import '@/assets/var';
 
-@note-item-width: 250.66666666px;
+//@note-item-width: 250.66666666px;
+@note-item-width: 217.33333px;
 @note-item-border-radius: 16px;
 @note-item-backdrop-filter: blur(42.5px);
 @color-border: rgba(0, 0, 0, 0.08);
@@ -160,4 +200,9 @@ const updateNoMore = (item: HTMLElement) => {
   user-select: none;
   background: var(--el-color-danger-light-9);
 }
+
+//.fade-enter-active,
+//.fade-leave-active {
+//  transition: all 5s ease-out;
+//}
 </style>

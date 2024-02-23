@@ -19,6 +19,11 @@ const router = createRouter({
       path: '/notification',
       name: 'notification',
       component: () => import('../views/NotificationView.vue')
+    },
+    {
+      path: '/explore/:postId',
+      name: 'postDetail',
+      component: () => import('../views/posts/PostDetail.vue')
     }
   ]
   // scrollBehavior(to, from, savedPosition) {

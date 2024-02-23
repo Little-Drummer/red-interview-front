@@ -17,3 +17,12 @@ export const getPostsWithImagesAuthorPageService: (
     method: 'get'
   })
 }
+
+export const getPostsDetailService: (postId: number) => Promise<Post> = (
+  postId: number
+) => {
+  return base_requests({
+    url: `/posts/${postId}`,
+    method: 'get'
+  })
+}
