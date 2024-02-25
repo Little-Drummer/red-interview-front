@@ -115,7 +115,7 @@ provide('commentsCount', postDetail.value.commentsCount)
   box-shadow: @elevation-note-shadow;
   border-radius: 20px;
   background: @elevation-note-background;
-  transform-origin: left top;
+  //transform-origin: left top;
 
   .media-container {
     position: relative;

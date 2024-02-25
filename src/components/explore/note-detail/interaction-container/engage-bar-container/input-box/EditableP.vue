@@ -4,7 +4,7 @@ import type { Ref } from 'vue'
 // 注入TextareaContent
 const textareaContent = inject<Ref<string>>('TextareaContent', ref(''))
 // 当用户输入时更新TextareaContent的值
-const updateValue = (event: InputEvent) => {
+const updateValue = (event: Event) => {
   let target = event.target as HTMLElement
   textareaContent.value = target.innerText
 }

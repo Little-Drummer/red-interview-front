@@ -6,6 +6,11 @@ import CoverImage from '@/components/explore/waterfall/CoverImage.vue'
 import PostDetail from '@/views/posts/PostDetail.vue'
 import PostMask from '@/components/explore/PostMask.vue'
 
+const sectionRef = ref()
+const coverImageRef = ref()
+const noteItemWidth = ref(217.33333)
+const noteItemWidthPx = computed(() => `${noteItemWidth.value}px`)
+// const noteItemWidthPx = ref('217.33333px')
 const showDetail = ref(false)
 const props = withDefaults(
   defineProps<{
@@ -52,43 +57,68 @@ const updateNoMore = (item: HTMLElement) => {
   item.style.transform = `translate(0px,${itemTop}px)`
 }
 
-const PostDetailId = ref<number>(0)
-const goPostDetail = (el: PointerEvent, postId: number) => {
-  document.startViewTransition(() => {
-    window.history.pushState({}, '', `/explore/${postId}`)
-    // 更改文章ID
-    PostDetailId.value = postId
-    console.log('goDetail', postId)
-    // router.push({
-    //   name: 'postDetail',
-    //   params: {
-    //     postId: postId
-    //   }
-    // })
-    showDetail.value = true
-  })
+const PostDetailId = ref<number>(122)
+const goPostDetail = (index: number, postId: number) => {
+  // let sectionElement = sectionRef.value[index]
+  let coverImageElement = coverImageRef.value[index].$el
+  //获取元素的位置
+  // let sectionRect = sectionElement.getBoundingClientRect()
+  let coverImageRect = coverImageElement.getBoundingClientRect()
+  sectionX.value = `${coverImageRect.left - 350}px`
+  sectionY.value = `${coverImageRect.top - 150}px`
+
+  // document.startViewTransition(() => {
+  window.history.pushState({}, '', `/explore/${postId}`)
+  // 更改文章ID
+  PostDetailId.value = postId
+  console.log('goDetail', postId)
+  // router.push({
+  //   name: 'postDetail',
+  //   params: {
+  //     postId: postId
+  //   }
+  // })
+  showDetail.value = true
+  // 添加键盘监听事件
+  window.addEventListener('keyup', onKeyUp)
+  // })
 }
 const ClickOutSide = () => {
-  document.startViewTransition(() => {
-    window.history.pushState({}, '', '/explore')
-    showDetail.value = false
-  })
+  // document.startViewTransition(() => {
+  window.history.pushState({}, '', '/explore')
+  showDetail.value = false
+  // 移除键盘监听事件
+  window.removeEventListener('keyup', onKeyUp)
+  // })
 }
+const onKeyUp = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    ClickOutSide()
+  }
+}
+
+const sectionX = ref('300px')
+const sectionY = ref('32px')
+// 计算位置
 </script>
 
 <template>
   <section
+    ref="sectionRef"
     v-waterfall
     class="note-item"
-    v-for="item in noteList"
+    v-for="(item, index) in noteList"
     :key="item.postId"
     v-memo="item.postId"
+    :style="{ width: noteItemWidthPx }"
   >
     <div>
       <cover-image
-        @click="goPostDetail($event, item.postId)"
+        ref="coverImageRef"
+        @click="goPostDetail(index, item.postId)"
         :image-url="item.images[0].imageUrl"
         :height="Number.parseInt(item.images[0].imageHeight) / 5"
+        :style="{ width: noteItemWidthPx }"
       />
       <feeds-footer
         :title="item.title"
@@ -100,14 +130,18 @@ const ClickOutSide = () => {
     </div>
   </section>
   <p v-if="isNoMore" class="no-more" v-waterfall>没有更多了</p>
+
   <teleport to=".main-content">
-    <!--    <transition name="fade" mode="out-in">-->
+    <!--    <transition name="fade" @before-enter="onBeforeEnter" @leave="onLeave">-->
     <post-mask v-if="showDetail">
       <template #default>
-        <post-detail
-          :postId="PostDetailId"
-          @clickOutside="ClickOutSide"
-        ></post-detail>
+        <transition name="fade">
+          <post-detail
+            v-if="showDetail"
+            :postId="PostDetailId"
+            @clickOutside="ClickOutSide"
+          ></post-detail>
+        </transition>
       </template>
     </post-mask>
     <!--    </transition>-->
@@ -116,23 +150,25 @@ const ClickOutSide = () => {
 
 <style scoped lang="less">
 @import '@/assets/var';
-
+//@note-item-width: v-bind(noteItemWidthPx);
 //@note-item-width: 250.66666666px;
-@note-item-width: 217.33333px;
+//@note-item-width: ;
 @note-item-border-radius: 16px;
 @note-item-backdrop-filter: blur(42.5px);
 @color-border: rgba(0, 0, 0, 0.08);
 @color-mask-backdrop: rgba(0, 0, 0, 0.25);
 
 .note-item {
-  width: @note-item-width;
+  //width: v-bind(noteItemWidthPx);
+  //width: @note-item-width;
   position: absolute;
   left: 0;
   top: 0;
 
   .cover {
     position: relative;
-    width: @note-item-width;
+    //width: @note-item-width;
+    //width: v-bind(noteItemWidthPx);
     display: flex;
     border-radius: @note-item-border-radius;
     overflow: hidden;
@@ -201,8 +237,44 @@ const ClickOutSide = () => {
   background: var(--el-color-danger-light-9);
 }
 
-//.fade-enter-active,
-//.fade-leave-active {
-//  transition: all 5s ease-out;
+//.fade-enter-from,
+//.fade-leave-to {
+//  opacity: 0;
 //}
+//
+///* 过渡进入的结束状态 */
+//.fade-enter-to,
+//.fade-leave-from {
+//  opacity: 1;
+//}
+
+//过渡的激活状态
+.fade-enter-active {
+  animation: bounce-in 1s ease-in;
+}
+
+//.fade-leave-from,
+//.fade-leave-to,
+//.fade-leave-active {
+//  animation: bounce-in 5s reverse;
+//}
+
+@keyframes bounce-in {
+  0% {
+    position: fixed;
+    left: v-bind(sectionX);
+    top: v-bind(sectionY);
+    //transform: translate(300px, 32px) scale(0);
+    transform: scale(0);
+  }
+  100% {
+    position: fixed;
+    //left: v-bind(sectionX);
+    //top: v-bind(sectionY);
+    top: 32px;
+    left: 300px;
+    transform: scale(1);
+    //transform: translate(300px, 32px) scale(1);
+  }
+}
 </style>
