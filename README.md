@@ -1,5 +1,9 @@
 # red-interview-front
 
+> 项目演示地址：[RedInterviewHub](https://redinterview.yjxw.win/)
+
+> 本项目是**RedInterviewHub**的前端部分，后端部分请参考[red-interview-api](https://github.com/Little-Drummer/red-interview-api)
+
 **RedInterviewHub**是一个仿小红书风格的面试分享平台，专注于提供高质量的面试经验、
 技巧和问题解答。该平台旨在帮助求职者准备面试，通过分享和探索面试相关的笔记来增强求职者
 的面试准备。我们的内容主要来源于小红书官方网站的优质面试相关笔记，通过先进的爬虫技术抓
