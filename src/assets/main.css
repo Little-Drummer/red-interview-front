@@ -1,13 +1,6 @@
 @import './base.css';
 
-button, input {
-    -webkit-appearance: none;
-    appearance: none;
-    outline: none;
-    border: none;
-    background: none;
-    padding: 0;
-}
+
 
 /*::view-transition-group(root) {*/
     /*transform-origin: left top;*/

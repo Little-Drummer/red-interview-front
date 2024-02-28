@@ -2,6 +2,7 @@
 import HeaderContainer from '@/components/header/HeaderContainer.vue'
 import SideBar from '@/components/side-bar/SideBar.vue'
 import BottomBar from '@/components/side-bar/BottomBar.vue'
+import LoginContainer from '@/components/login/LoginContainer.vue'
 </script>
 
 <template>
@@ -44,6 +45,9 @@ import BottomBar from '@/components/side-bar/BottomBar.vue'
       </el-affix>
     </el-container>
   </div>
+  <teleport to="#app">
+    <LoginContainer />
+  </teleport>
 </template>
 
 <style scoped lang="less">

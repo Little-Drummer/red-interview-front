@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ExploreView from '@/views/ExploreView.vue'
+import { useUserStore } from '@/stores/modules/user.ts'
 // import { useMiscStore } from '@/stores/modules/misc.ts'
 
 const router = createRouter({
@@ -47,6 +48,20 @@ const router = createRouter({
   // return { top: MiscStore.feedsScrollPosition, behavior: 'smooth' }
   //     } else return { top: 1000, behavior: 'smooth' }
   //   }
+})
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  if (to.path === '/user') {
+    if (!userStore.isLogin) {
+      userStore.setLoginDialogVisible(true)
+      next(false)
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

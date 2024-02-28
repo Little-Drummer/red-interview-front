@@ -156,7 +156,6 @@ const sectionY = ref('32px')
 @note-item-border-radius: 16px;
 @note-item-backdrop-filter: blur(42.5px);
 @color-border: rgba(0, 0, 0, 0.08);
-@color-mask-backdrop: rgba(0, 0, 0, 0.25);
 
 .note-item {
   //width: v-bind(noteItemWidthPx);

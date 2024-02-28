@@ -106,10 +106,6 @@ provide('commentsCount', postDetail.value.commentsCount)
 <style scoped lang="less">
 @import '@/assets/var';
 
-@elevation-note-shadow:
-  0 8px 64px 0 rgba(0, 0, 0, 0.04),
-  0 1px 4px 0 rgba(0, 0, 0, 0.02);
-
 .note-container {
   display: flex;
   box-shadow: @elevation-note-shadow;

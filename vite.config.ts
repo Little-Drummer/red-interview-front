@@ -12,13 +12,14 @@ export default defineConfig({
     }
   },
   server: {
-    // host: '0.0.0.0',
-    // proxy: {
-    //   '/api': {
-    //     // target: 'http://localhost:8080',
-    //     target: 'https://redbook.yjxw.win/api/',
-    //     rewrite: (path) => path.replace(/^\/api/, '')
-    //   }
-    // }
+    host: '0.0.0.0',
+    proxy: {
+      '/api': {
+        // target: 'http://localhost:8080',
+        target: 'https://redbook.yjxw.win/api/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
   }
 })
