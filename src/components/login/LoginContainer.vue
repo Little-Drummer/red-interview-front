@@ -1,24 +1,158 @@
 <script setup lang="ts">
-import { computed, ref, watch, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { useUserStore } from '@/stores/modules/user.ts'
 import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
+import { ElMessage } from 'element-plus'
+import { registerService, sendVerificationCode } from '@/api/user.ts'
 
 const userStore = useUserStore()
 const { loginDialogVisible, userInfo } = storeToRefs(userStore)
 
 const setLoginDialogVisible = (visible: boolean) => {
   userStore.setLoginDialogVisible(visible)
+  // 清空数据
+  userStore.setUserInfo({
+    email: '',
+    password: '',
+    rePassword: '',
+    username: '',
+    avatar: '',
+    id: 0
+  })
 }
 const userInfoEmail = computed({
   get: () => userInfo.value.email,
-  set: (value) => {}
+  set: (value) => {
+    userStore.userInfo.email = value
+  }
 })
-const isPhoneOk = ref(false)
+
+const verificationCodeText = ref('获取验证码')
+// 获取验证码的方法
+const getCode = async () => {
+  if (isOk.value === 1) {
+    await sendVerificationCode(userInfo.value.email)
+    isOk.value = 2
+    ElMessage({
+      message: '验证码发送成功',
+      type: 'success',
+      appendTo: '.login-modal'
+    })
+    if (verificationCode.value.length === 6) {
+      isRegisterVisible.value = true
+    }
+    let count = 60
+    verificationCodeText.value = `重新发送 (${count})s`
+    const timer = setInterval(() => {
+      count--
+      verificationCodeText.value = `重新发送 (${count}s)`
+      if (count === 0) {
+        clearInterval(timer)
+        verificationCodeText.value = '获取验证码'
+        if (
+          isFormOk(
+            userInfo.value.email,
+            userInfo.value.password,
+            userInfo.value.rePassword
+          )
+        ) {
+          isOk.value = 1
+        } else {
+          isOk.value = 0
+        }
+      }
+    }, 1000)
+  } else if (isOk.value === 0) {
+    ElMessage({
+      message: '请检查邮箱和密码是否正确',
+      type: 'error',
+      appendTo: '.login-modal'
+    })
+  } else {
+    ElMessage({
+      message: '验证码已发送，请稍后再试',
+      type: 'error',
+      appendTo: '.login-modal'
+    })
+  }
+}
+
+const isOk = ref(0) // 0 格式错误 1 格式正确 2 已经发送
+// 验证表单是否正确
+const isFormOk = (email: string, password: string, rePassword: string) => {
+  return (
+    email.match(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/) &&
+    password &&
+    rePassword &&
+    password === rePassword
+  )
+}
+
+// 改变获取验证码按钮状态
 watchEffect(() => {
-  const phone = userInfo.value.phone
-  isPhoneOk.value = !!(phone && phone.match(/^1[3-9]\d{9}$/))
+  if (isOk.value === 2) {
+    return
+  }
+  const email = userInfo.value.email
+  const password = userInfo.value.password
+  const rePassword = userInfo.value.rePassword
+  if (isFormOk(email, password, rePassword)) {
+    isOk.value = 1
+  } else {
+    isOk.value = 0
+  }
+  // if (verificationCode.length === 6 && isOk.value === 2) {
+  //   isRegisterVisible.value = true
+  // } else {
+  //   isRegisterVisible.value = false
+  // }
 })
+
+// 注册按钮是否可点击
+const isRegisterVisible = ref(false)
+const verificationCode = ref('')
+// 验证码
+const verificationCodeCom = computed({
+  set: (value) => {
+    console.log(value, 'value')
+    isRegisterVisible.value = value.length === 6 && isOk.value === 2
+    verificationCode.value = value
+  },
+  get: () => {
+    return verificationCode.value
+  }
+})
+const onRegister = async () => {
+  if (!verificationCode.value || verificationCode.value.length !== 6) {
+    ElMessage({
+      message: '请检查验证码是否正确',
+      type: 'error',
+      appendTo: '.login-modal'
+    })
+    return
+  }
+  if (
+    !isFormOk(
+      userInfo.value.email,
+      userInfo.value.password,
+      userInfo.value.rePassword
+    )
+  ) {
+    ElMessage({
+      message: '请检查邮箱和密码是否正确',
+      type: 'error',
+      appendTo: '.login-modal'
+    })
+  }
+  // 注册
+
+  await registerService({
+    email: userInfo.value.email,
+    password: userInfo.value.password,
+    verificationCode: verificationCode.value
+  })
+}
 </script>
 
 <template>
@@ -49,43 +183,102 @@ watchEffect(() => {
                   placeholder="请输入邮箱"
                   name="blur"
                   autofocus
+                  autocomplete="username"
                   v-model="userInfoEmail"
-                  maxlength="20"
+                  maxlength="25"
+                  ref="email"
                 />
+                <span
+                  class="clear-icon"
+                  v-if="userInfoEmail"
+                  @click="userStore.userInfo.email = ''"
+                >
+                  <Icon icon="ci:off-outline-close" :width="18" />
+                </span>
               </label>
-              <div style="height: 16px"></div>
+              <div style="height: 8px"></div>
+              <label for="" class="password">
+                <input
+                  type="password"
+                  placeholder="请输入密码"
+                  name="blur"
+                  v-model="userInfo.password"
+                  maxlength="20"
+                  minlength="8"
+                  autocomplete="new-password"
+                />
+                <span
+                  class="clear-icon"
+                  v-if="userInfo.password"
+                  @click="userInfo.password = ''"
+                >
+                  <Icon icon="ci:off-outline-close" :width="18" />
+                </span>
+              </label>
+              <div style="height: 8px"></div>
+              <label for="" class="re-password">
+                <input
+                  type="password"
+                  placeholder="请再次输入密码"
+                  name="blur"
+                  v-model="userInfo.rePassword"
+                  maxlength="20"
+                  minlength="8"
+                  autocomplete="new-password"
+                />
+                <span
+                  class="clear-icon"
+                  v-if="userInfo.rePassword"
+                  @click="userInfo.rePassword = ''"
+                >
+                  <Icon icon="ci:off-outline-close" :width="18" />
+                </span>
+              </label>
+              <div style="height: 8px"></div>
               <label for="" class="auth-code">
                 <input
-                  type="number"
+                  type="text"
                   placeholder="请输入验证码"
-                  autocomplete="false"
+                  autocomplete="off"
+                  v-model="verificationCodeCom"
+                  maxlength="6"
                 />
-                <span class="code-button" :class="{ active: isPhoneOk }"
-                  >获取验证码</span
+                <span
+                  class="code-button"
+                  @click="getCode"
+                  :class="{ active: isOk == 1 }"
+                  >{{ verificationCodeText }}</span
                 >
               </label>
-              <div class="err-msg"></div>
-              <button @click="submit" class="submit">注册</button>
+              <!--              <div class="err-msg"></div>-->
+              <button
+                type="button"
+                @click="onRegister"
+                class="submit"
+                :class="{ active: isRegisterVisible }"
+              >
+                注册
+              </button>
             </form>
           </div>
           <div class="login-tip">
             <span>已有账号？</span>
             <span class="login-link">点此登录</span>
           </div>
-          <div class="oauth-tip">
-            <span class="oauth-tip-line">或</span>
-          </div>
-          <div class="login">
-            <div class="login-common">
-              <Icon
-                style="margin-right: 4px"
-                icon="mdi:wechat"
-                :width="18"
-                color="#07C160"
-              />
-              微信登录
-            </div>
-          </div>
+          <!--          <div class="oauth-tip">-->
+          <!--            <span class="oauth-tip-line">或</span>-->
+          <!--          </div>-->
+          <!--          <div class="login">-->
+          <!--            <div class="login-common">-->
+          <!--              <Icon-->
+          <!--                style="margin-right: 4px"-->
+          <!--                icon="mdi:wechat"-->
+          <!--                :width="18"-->
+          <!--                color="#07C160"-->
+          <!--              />-->
+          <!--              微信登录-->
+          <!--            </div>-->
+          <!--          </div>-->
         </div>
       </div>
     </div>
@@ -192,16 +385,6 @@ div.reds-modal-open {
           margin-right: 20px;
           color: @color-primary-label;
         }
-        //.email_domain {
-        //  border: none;
-        //  font-weight: 400;
-        //  color: @color-primary-label;
-        //  width: 120px;
-        //  height: 100%;
-        //  &:focus {
-        //    outline: none;
-        //  }
-        //}
       }
       .auth-code {
         padding-left: 16px;
@@ -217,7 +400,9 @@ div.reds-modal-open {
         }
       }
       .auth-code,
-      .email {
+      .email,
+      .password,
+      .re-password {
         padding-left: 16px;
         display: flex;
         align-items: center;
@@ -243,6 +428,13 @@ div.reds-modal-open {
       .err-msg {
         height: 10px;
         margin-top: 9.5px;
+      }
+      .clear-icon {
+        display: flex;
+        align-items: center;
+        margin-right: 16px;
+        cursor: pointer;
+        line-height: 22px;
       }
       .submit {
         margin-top: 24px;

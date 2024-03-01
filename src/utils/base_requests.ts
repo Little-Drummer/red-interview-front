@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
 
-// const baseURL = 'https://redbook.yjxw.win/api' // nginx代理
+// const baseURL = 'https://redinterview.yjxw.win/api' // nginx代理
 const baseURL = '/api' // nginx代理
 
 const instance = axios.create({
