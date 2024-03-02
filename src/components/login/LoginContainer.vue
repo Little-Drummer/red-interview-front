@@ -32,13 +32,21 @@ const verificationCodeText = ref('获取验证码')
 // 获取验证码的方法
 const getCode = async () => {
   if (isOk.value === 1) {
-    await sendVerificationCode(userInfo.value.email)
-    isOk.value = 2
-    ElMessage({
-      message: '验证码发送成功',
-      type: 'success',
-      appendTo: '.login-modal'
-    })
+    let resultCode = await sendVerificationCode(userInfo.value.email)
+    if (resultCode === 200) {
+      isOk.value = 2
+      ElMessage({
+        message: '验证码发送成功',
+        type: 'success',
+        appendTo: '.login-modal'
+      })
+    } else {
+      ElMessage({
+        message: '验证码发送失败',
+        type: 'error',
+        appendTo: '.login-modal'
+      })
+    }
     if (verificationCode.value.length === 6) {
       isRegisterVisible.value = true
     }
@@ -115,8 +123,8 @@ const verificationCode = ref('')
 // 验证码
 const verificationCodeCom = computed({
   set: (value) => {
-    console.log(value, 'value')
-    isRegisterVisible.value = value.length === 6 && isOk.value === 2
+    // console.log(value, 'value')
+    isRegisterVisible.value = value.length === 6
     verificationCode.value = value
   },
   get: () => {
@@ -124,6 +132,7 @@ const verificationCodeCom = computed({
   }
 })
 const onRegister = async () => {
+  console.log(userInfo.value)
   if (!verificationCode.value || verificationCode.value.length !== 6) {
     ElMessage({
       message: '请检查验证码是否正确',
@@ -144,14 +153,42 @@ const onRegister = async () => {
       type: 'error',
       appendTo: '.login-modal'
     })
+    return
   }
   // 注册
 
-  await registerService({
+  let result = await registerService({
     email: userInfo.value.email,
     password: userInfo.value.password,
     verificationCode: verificationCode.value
   })
+  // console.log(result)
+  if (result.code === 200) {
+    ElMessage({
+      message: '注册成功',
+      type: 'success',
+      appendTo: '.login-modal'
+    })
+    return
+    // setLoginDialogVisible(false)
+  }
+  if (result.code === 400) {
+    const cause: { [key: string]: string } = result.data
+    const keys: string[] = Object.keys(cause)
+    keys.forEach((key) => {
+      ElMessage({
+        message: cause[key],
+        type: 'error',
+        appendTo: '.login-modal'
+      })
+    })
+  } else {
+    ElMessage({
+      message: result.message,
+      type: 'error',
+      appendTo: '.login-modal'
+    })
+  }
 }
 </script>
 

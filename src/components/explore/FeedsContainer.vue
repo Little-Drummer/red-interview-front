@@ -10,10 +10,19 @@ const pageNumber = ref(1)
 const isEmpty = ref(false)
 // 首次请求数据
 const postsImageAuthorList = ref({} as PostPage)
-postsImageAuthorList.value = await getPostsWithImagesAuthorPageService(
+// postsImageAuthorList.value = await getPostsWithImagesAuthorPageService(
+//   pageNumber.value,
+//   pageSize
+// )
+
+const result = await getPostsWithImagesAuthorPageService(
   pageNumber.value,
   pageSize
 )
+if (result.code === 200) {
+  postsImageAuthorList.value = result.data
+}
+
 // 判断首次加载是否为空
 if (postsImageAuthorList.value.records.length === 0) {
   isEmpty.value = true
@@ -26,10 +35,14 @@ const load = async () => {
     return
   }
   pageNumber.value++
-  let postPage = await getPostsWithImagesAuthorPageService(
+  let result = await getPostsWithImagesAuthorPageService(
     pageNumber.value,
     pageSize
   )
+  if (result.code !== 200) {
+    return
+  }
+  let postPage = result.data
   if (postPage.pageNumber > postPage.totalPage) {
     isNoMore.value = true
   }

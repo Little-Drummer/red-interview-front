@@ -16,8 +16,10 @@ const props = defineProps<{
 
 const postDetail = ref({} as Post)
 
-postDetail.value = await getPostsDetailService(props.postId)
-console.log(postDetail.value)
+const result = await getPostsDetailService(props.postId)
+if (result.code === 200) {
+  postDetail.value = result.data
+}
 
 const emit = defineEmits(['clickOutside'])
 const noteContainerRef = ref(null)

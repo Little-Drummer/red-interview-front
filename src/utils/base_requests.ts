@@ -1,6 +1,7 @@
 import axios from 'axios'
-import type { AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
+import type { ResultType } from '@/type/Result.ts'
+import type { AxiosResponse } from 'axios'
 
 // const baseURL = 'https://redinterview.yjxw.win/api' // nginx代理
 const baseURL = '/api' // nginx代理
@@ -17,17 +18,15 @@ instance.interceptors.request.use(
   },
   (err) => Promise.reject(err)
 )
-interface ResponseData<T> {
-  code: number
-  data: T
-  message: string
-}
 instance.interceptors.response.use(
-  (res: AxiosResponse<ResponseData<any>>): any => {
-    // console.log(res)
+  (
+    res: AxiosResponse<ResultType<any>>
+  ):
+    | AxiosResponse<ResultType<any>>
+    | Promise<AxiosResponse<ResultType<any>>> => {
     // 1为成功 其他为失败
-    if (res.data.code === 200) {
-      return res.data.data
+    if (res.status === 200) {
+      return res
     }
     //处理业务失败
     ElMessage({
@@ -37,13 +36,17 @@ instance.interceptors.response.use(
     return Promise.reject(res.data)
   },
   (err) => {
+    console.log(err, 'err')
     // 处理401的错误
     //错误的特殊情况
     // if (err.response?.status === 401) {
     //   router.push('/login')
     // }
+    if (err.response?.status === 400) {
+      return err.response
+    }
     //错误的默认情况=>只要给提示
-    // ElMessage.error(err.message || '服务异常')
+    ElMessage.error(err.message || '服务异常')
     return Promise.reject(err)
   }
 )
