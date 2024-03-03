@@ -48,7 +48,7 @@ const getCode = async () => {
       })
     }
     if (verificationCode.value.length === 6) {
-      isRegisterVisible.value = true
+      isRegisterActive.value = true
     }
     let count = 60
     verificationCodeText.value = `重新发送 (${count})s`
@@ -118,19 +118,21 @@ watchEffect(() => {
 })
 
 // 注册按钮是否可点击
-const isRegisterVisible = ref(false)
+const isRegisterActive = ref(false)
 const verificationCode = ref('')
 // 验证码
 const verificationCodeCom = computed({
   set: (value) => {
     // console.log(value, 'value')
-    isRegisterVisible.value = value.length === 6
+    isRegisterActive.value = value.length === 6
     verificationCode.value = value
   },
   get: () => {
     return verificationCode.value
   }
 })
+
+const isRegisterVisible = ref(true)
 const onRegister = async () => {
   console.log(userInfo.value)
   if (!verificationCode.value || verificationCode.value.length !== 6) {
@@ -170,6 +172,7 @@ const onRegister = async () => {
       appendTo: '.login-modal'
     })
     return
+    // TODO: 1.注册成功后跳转到登录
     // setLoginDialogVisible(false)
   }
   if (result.code === 400) {
@@ -209,8 +212,8 @@ const onRegister = async () => {
         <div class="close-button" @click="setLoginDialogVisible(false)">
           <Icon icon="material-symbols:close" :width="20" />
         </div>
-        <div class="register-form">
-          <div class="title">电子邮箱注册</div>
+        <div v-if="isRegisterVisible" class="register-form">
+          <div class="title underline">电子邮箱注册</div>
           <div class="prompt">支持大部分电子邮箱</div>
           <div class="input-container">
             <form action="">
@@ -292,7 +295,7 @@ const onRegister = async () => {
                 type="button"
                 @click="onRegister"
                 class="submit"
-                :class="{ active: isRegisterVisible }"
+                :class="{ active: isRegisterActive }"
               >
                 注册
               </button>
@@ -300,7 +303,9 @@ const onRegister = async () => {
           </div>
           <div class="login-tip">
             <span>已有账号？</span>
-            <span class="login-link">点此登录</span>
+            <span class="login-link" @click="isRegisterVisible = false"
+              >点此登录</span
+            >
           </div>
           <!--          <div class="oauth-tip">-->
           <!--            <span class="oauth-tip-line">或</span>-->

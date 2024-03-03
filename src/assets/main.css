@@ -1,6 +1,8 @@
 @import './base.css';
 
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /*::view-transition-group(root) {*/
     /*transform-origin: left top;*/
