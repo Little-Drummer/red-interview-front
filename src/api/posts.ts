@@ -1,6 +1,6 @@
 import base_requests from '@/utils/base_requests.ts'
 import type { Post, PostPage } from '@/type/noteType.ts'
-import type { ResultType } from '@/type/Result.ts'
+import type { ResultType } from '@/type/resultType.ts'
 import type { AxiosResponse } from 'axios'
 
 export const getPostsWithImagesAuthorService: () => Promise<Post[]> = () => {
@@ -25,9 +25,9 @@ export const getPostsWithImagesAuthorPageService: (
   })
 }
 
-export const getPostsDetailService: (postId: number) => Promise<ResultType<Post>> =async (
+export const getPostsDetailService: (
   postId: number
-) => {
+) => Promise<ResultType<Post>> = async (postId: number) => {
   return base_requests({
     url: `/posts/${postId}`,
     method: 'get'

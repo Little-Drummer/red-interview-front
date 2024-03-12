@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import type { ResultType } from '@/type/Result.ts'
+import type { ResultType } from '@/type/resultType.ts'
 import type { AxiosResponse } from 'axios'
 
 // const baseURL = 'https://redinterview.yjxw.win/api' // nginx代理
