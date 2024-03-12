@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import DropDownItem from '@/components/header/DropDownItem.vue'
+const frontend = 'https://github.com/Little-Drummer/red-interview-front'
+const backend = 'https://github.com/Little-Drummer/red-interview-api'
+const demo = 'https://redbook.yjxw.win/'
+const blog = 'https://blog.yjxw.win/'
 </script>
 
 <template>
@@ -10,23 +14,24 @@ import DropDownItem from '@/components/header/DropDownItem.vue'
       class="header-menu-but"
       :teleported="false"
     >
-      <span class="el-dropdown-link">创作中心</span>
+      <span class="el-dropdown-link">项目地址</span>
       <template #dropdown>
         <el-dropdown-menu>
-          <drop-down-item content="创作服务" />
-          <drop-down-item content="直播管理" />
-          <drop-down-item content="电脑直播助手" />
+          <drop-down-item content="前端地址" :to="frontend" />
+          <drop-down-item content="后端地址" :to="backend" />
+          <drop-down-item content="演示地址" :to="demo" />
         </el-dropdown-menu>
       </template>
     </el-dropdown>
-    <el-dropdown popper-class="dropdown-nav" class="header-menu-but" :teleported="false">
-      <span class="el-dropdown-link">业务合作</span>
+    <el-dropdown
+      popper-class="dropdown-nav"
+      class="header-menu-but"
+      :teleported="false"
+    >
+      <span class="el-dropdown-link">关于我</span>
       <template #dropdown>
         <el-dropdown-menu>
-          <drop-down-item content="推广合作" />
-          <drop-down-item content="蒲公英" />
-          <drop-down-item content="商家入驻" />
-          <drop-down-item content="MCN入住" />
+          <drop-down-item content="个人博客" :to="blog" />
         </el-dropdown-menu>
       </template>
     </el-dropdown>

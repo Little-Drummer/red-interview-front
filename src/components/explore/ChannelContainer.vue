@@ -38,7 +38,8 @@ const change_channel = (channel_id: string) => {
 
 <template>
   <div class="channel-container">
-    <div class="reds-sticky-box sticky">
+    <!--    <div class="reds-sticky-box sticky">-->
+    <div class="reds-sticky-box">
       <div class="reds-sticky">
         <div class="scroll-container channel-scroll-container">
           <div class="content-container">

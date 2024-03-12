@@ -1,7 +1,8 @@
 import base_requests from '@/utils/base_requests.ts'
-import type { registerFormType } from '@/type/userType.ts'
+import type { loginFormType, registerFormType } from '@/type/userType.ts'
 import type { AxiosResponse } from 'axios'
-import type { ResultType } from '@/type/Result.ts'
+import type { ResultType } from '@/type/resultType.ts'
+import type { userInfoType } from '@/type/userType.ts'
 
 export const sendVerificationCode: (email: string) => Promise<number> = async (
   email: string
@@ -27,4 +28,22 @@ export const registerService: (
   }).then((res: AxiosResponse<ResultType<any>>) => {
     return res.data
   })
+}
+
+export const loginService: (
+  loginForm: loginFormType
+) => Promise<ResultType<userInfoType | { [key: string]: string }>> = async (
+  loginForm: loginFormType
+) => {
+  return base_requests({
+    url: '/user/login',
+    method: 'post',
+    data: loginForm
+  }).then(
+    (
+      res: AxiosResponse<ResultType<userInfoType | { [key: string]: string }>>
+    ) => {
+      return res.data
+    }
+  )
 }

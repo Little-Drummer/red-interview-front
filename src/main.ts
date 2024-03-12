@@ -7,6 +7,8 @@ import 'element-plus/dist/index.css' // 导入 Element Plus 样式
 
 import pinia from './stores/index.ts' // 导入 pinia
 
+import 'virtual:uno.css' // 导入 uno.css
+
 import App from './App.vue'
 import router from './router'
 

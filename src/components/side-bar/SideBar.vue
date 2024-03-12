@@ -4,19 +4,14 @@ import SolarHomeSmileAngleLinear from '@/components/icon/SolarHomeSmileAngleLine
 import TablerSquareRoundedPlus from '@/components/icon/TablerSquareRoundedPlus.vue'
 import BxBell from '@/components/icon/BxBell.vue'
 import UserAvatar from '@/components/side-bar/UserAvatar.vue'
-import { ref, watch } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/modules/user.ts'
 
 const router = useRoute()
 const currentRoute = ref('')
-
-watch(
-  () => router.path,
-  (to) => {
-    currentRoute.value = to
-  }
-)
-
+const userStore = useUserStore()
+const currentUserId = ref(-1)
 const sideBarItemContent = [
   {
     icon: SolarHomeSmileAngleLinear,
@@ -36,9 +31,27 @@ const sideBarItemContent = [
   {
     icon: UserAvatar,
     title: '我',
-    to: '/user'
+    to: '/user/profile/' + currentUserId.value
   }
 ]
+
+watchEffect(() => {
+  currentUserId.value = userStore.userInfo.id
+  sideBarItemContent[3].to = '/user/profile/' + currentUserId.value
+})
+
+// userStore.getUserInfo().then(() => {
+//   currentUserId.value = userStore.userInfo.id
+// })
+
+// const currentUser
+
+watch(
+  () => router.path,
+  (to) => {
+    currentRoute.value = to
+  }
+)
 </script>
 
 <template>

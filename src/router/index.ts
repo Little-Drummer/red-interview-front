@@ -19,12 +19,28 @@ const router = createRouter({
     {
       path: '/notification',
       name: 'notification',
-      component: () => import('../views/NotificationView.vue')
+      component: () => import('../views/NotificationView.vue'),
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/explore/:postId',
       name: 'postDetail',
       component: () => import('../views/posts/PostDetail.vue')
+    },
+    {
+      path: '/user/profile/:userId',
+      name: 'userProfile',
+      component: () => import('../views/user/UserProfile.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'notFound',
+      component: () => import('../views/not-found/NotFound.vue')
     }
   ]
   // scrollBehavior(to, from, savedPosition) {
@@ -51,11 +67,14 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  // console.log(to)
   const userStore = useUserStore()
-  if (to.path === '/user') {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    // console.log('需要登录')
     if (!userStore.isLogin) {
       userStore.setLoginDialogVisible(true)
-      next(false)
+      userStore.setAttemptedRoute(to.fullPath)
+      next('/')
     } else {
       next()
     }

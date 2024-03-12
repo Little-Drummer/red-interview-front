@@ -4,7 +4,12 @@ import { useUserStore } from '@/stores/modules/user.ts'
 import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
 import { ElMessage } from 'element-plus'
-import { registerService, sendVerificationCode } from '@/api/user.ts'
+import {
+  loginService,
+  registerService,
+  sendVerificationCode
+} from '@/api/user.ts'
+import router from '@/router'
 
 const userStore = useUserStore()
 const { loginDialogVisible, userInfo } = storeToRefs(userStore)
@@ -13,13 +18,10 @@ const setLoginDialogVisible = (visible: boolean) => {
   userStore.setLoginDialogVisible(visible)
   // 清空数据
   userStore.setUserInfo({
-    email: '',
-    password: '',
-    rePassword: '',
-    username: '',
-    avatar: '',
-    id: 0
+    email: ''
   })
+  userStore.setPassword('')
+  userStore.setRePassword('')
 }
 const userInfoEmail = computed({
   get: () => userInfo.value.email,
@@ -61,8 +63,8 @@ const getCode = async () => {
         if (
           isFormOk(
             userInfo.value.email,
-            userInfo.value.password,
-            userInfo.value.rePassword
+            userStore.password,
+            userStore.rePassword
           )
         ) {
           isOk.value = 1
@@ -103,8 +105,8 @@ watchEffect(() => {
     return
   }
   const email = userInfo.value.email
-  const password = userInfo.value.password
-  const rePassword = userInfo.value.rePassword
+  const password = userStore.password
+  const rePassword = userStore.rePassword
   if (isFormOk(email, password, rePassword)) {
     isOk.value = 1
   } else {
@@ -119,6 +121,8 @@ watchEffect(() => {
 
 // 注册按钮是否可点击
 const isRegisterActive = ref(false)
+
+// 验证码
 const verificationCode = ref('')
 // 验证码
 const verificationCodeCom = computed({
@@ -131,10 +135,11 @@ const verificationCodeCom = computed({
     return verificationCode.value
   }
 })
-
-const isRegisterVisible = ref(true)
+// 控制注册和登录的显示
+const isRegisterVisible = ref(false)
+// 注册方法
 const onRegister = async () => {
-  console.log(userInfo.value)
+  // console.log(userInfo.value)
   if (!verificationCode.value || verificationCode.value.length !== 6) {
     ElMessage({
       message: '请检查验证码是否正确',
@@ -144,11 +149,7 @@ const onRegister = async () => {
     return
   }
   if (
-    !isFormOk(
-      userInfo.value.email,
-      userInfo.value.password,
-      userInfo.value.rePassword
-    )
+    !isFormOk(userInfo.value.email, userStore.password, userStore.rePassword)
   ) {
     ElMessage({
       message: '请检查邮箱和密码是否正确',
@@ -161,7 +162,7 @@ const onRegister = async () => {
 
   let result = await registerService({
     email: userInfo.value.email,
-    password: userInfo.value.password,
+    password: userStore.password,
     verificationCode: verificationCode.value
   })
   // console.log(result)
@@ -171,8 +172,9 @@ const onRegister = async () => {
       type: 'success',
       appendTo: '.login-modal'
     })
+    // 1.注册成功后跳转到登录
+    isRegisterVisible.value = false
     return
-    // TODO: 1.注册成功后跳转到登录
     // setLoginDialogVisible(false)
   }
   if (result.code === 400) {
@@ -188,6 +190,81 @@ const onRegister = async () => {
   } else {
     ElMessage({
       message: result.message,
+      type: 'error',
+      appendTo: '.login-modal'
+    })
+  }
+}
+// 登录按钮是否可点击
+const isLoginActive = computed(() => {
+  return userInfo.value.email && userStore.password
+})
+// 登录方法
+const onLogin = async () => {
+  if (
+    userInfo.value.email &&
+    userInfo.value.email.match(
+      /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+    ) &&
+    userStore.password
+  ) {
+    // 登录
+    let result = await loginService({
+      email: userInfo.value.email,
+      password: userStore.password
+    })
+    if (result.code === 200) {
+      console.log(result.data)
+      userStore.setIsLogin(true)
+      userStore.setUserInfo({
+        id: result.data.id as number,
+        email: result.data.email,
+        name: result.data.name,
+        gender: result.data.gender as number,
+        bio: result.data.bio,
+        avatar: result.data.avatar,
+        userType: result.data.userType as number
+      })
+      userStore.setPassword('')
+      userStore.setToken(result.data.token)
+      userStore.setLoginDialogVisible(false)
+      ElMessage({
+        message: '登录成功',
+        type: 'success',
+        appendTo: '.login-modal'
+      })
+      if (
+        userStore.attemptedRoute !== '' &&
+        userStore.attemptedRoute !== '/user/profile/0'
+      ) {
+        await router.push(userStore.attemptedRoute)
+        userStore.setAttemptedRoute('') // 清除保存的路由
+      } else {
+        await router.push('/user/profile/' + result.data.id)
+      }
+      return
+    } else if (result.code === 400) {
+      const cause: { [p: string]: string } = result.data as {
+        [p: string]: string
+      }
+      const keys: string[] = Object.keys(cause)
+      keys.forEach((key) => {
+        ElMessage({
+          message: cause[key],
+          type: 'error',
+          appendTo: '.login-modal'
+        })
+      })
+    } else {
+      ElMessage({
+        message: result.message,
+        type: 'error',
+        appendTo: '.login-modal'
+      })
+    }
+  } else {
+    ElMessage({
+      message: '请检查邮箱和密码是否正确',
       type: 'error',
       appendTo: '.login-modal'
     })
@@ -210,118 +287,176 @@ const onRegister = async () => {
       ></i>
       <div class="login-container">
         <div class="close-button" @click="setLoginDialogVisible(false)">
+          <!--        <div class="close-button" @click="">-->
           <Icon icon="material-symbols:close" :width="20" />
+          <!--          <button @click="isRegisterVisible = !isRegisterVisible">切换</button>-->
         </div>
-        <div v-if="isRegisterVisible" class="register-form">
-          <div class="title underline">电子邮箱注册</div>
-          <div class="prompt">支持大部分电子邮箱</div>
-          <div class="input-container">
-            <form action="">
-              <label for="" class="email">
-                <input
-                  type="text"
-                  placeholder="请输入邮箱"
-                  name="blur"
-                  autofocus
-                  autocomplete="username"
-                  v-model="userInfoEmail"
-                  maxlength="25"
-                  ref="email"
-                />
-                <span
-                  class="clear-icon"
-                  v-if="userInfoEmail"
-                  @click="userStore.userInfo.email = ''"
+        <transition name="fade" mode="out-in">
+          <div v-if="isRegisterVisible" class="register-form">
+            <div class="title">电子邮箱注册</div>
+            <div class="prompt">支持大部分电子邮箱</div>
+            <div class="input-container">
+              <form action="">
+                <label for="" class="email">
+                  <input
+                    type="text"
+                    placeholder="请输入邮箱"
+                    name="blur"
+                    autofocus
+                    autocomplete="username"
+                    v-model="userInfoEmail"
+                    maxlength="25"
+                    ref="email"
+                  />
+                  <span
+                    class="clear-icon"
+                    v-if="userInfoEmail"
+                    @click="userStore.userInfo.email = ''"
+                  >
+                    <Icon icon="ci:off-outline-close" :width="18" />
+                  </span>
+                </label>
+                <div style="height: 8px"></div>
+                <label for="" class="password">
+                  <input
+                    type="password"
+                    placeholder="请输入密码"
+                    name="blur"
+                    v-model="userStore.password"
+                    maxlength="20"
+                    minlength="8"
+                    autocomplete="new-password"
+                  />
+                  <span
+                    class="clear-icon"
+                    v-if="userStore.password"
+                    @click="userStore.password = ''"
+                  >
+                    <Icon icon="ci:off-outline-close" :width="18" />
+                  </span>
+                </label>
+                <div style="height: 8px"></div>
+                <label for="" class="re-password">
+                  <input
+                    type="password"
+                    placeholder="请再次输入密码"
+                    name="blur"
+                    v-model="userStore.rePassword"
+                    maxlength="20"
+                    minlength="8"
+                    autocomplete="new-password"
+                  />
+                  <span
+                    class="clear-icon"
+                    v-if="userStore.rePassword"
+                    @click="userStore.rePassword = ''"
+                  >
+                    <Icon icon="ci:off-outline-close" :width="18" />
+                  </span>
+                </label>
+                <div style="height: 8px"></div>
+                <label for="" class="auth-code">
+                  <input
+                    type="text"
+                    placeholder="请输入验证码"
+                    autocomplete="off"
+                    v-model="verificationCodeCom"
+                    maxlength="6"
+                  />
+                  <span
+                    class="code-button"
+                    @click="getCode"
+                    :class="{ active: isOk == 1 }"
+                    >{{ verificationCodeText }}</span
+                  >
+                </label>
+                <!--              <div class="err-msg"></div>-->
+                <button
+                  type="button"
+                  @click="onRegister"
+                  class="submit"
+                  :class="{ active: isRegisterActive }"
                 >
-                  <Icon icon="ci:off-outline-close" :width="18" />
-                </span>
-              </label>
-              <div style="height: 8px"></div>
-              <label for="" class="password">
-                <input
-                  type="password"
-                  placeholder="请输入密码"
-                  name="blur"
-                  v-model="userInfo.password"
-                  maxlength="20"
-                  minlength="8"
-                  autocomplete="new-password"
-                />
-                <span
-                  class="clear-icon"
-                  v-if="userInfo.password"
-                  @click="userInfo.password = ''"
-                >
-                  <Icon icon="ci:off-outline-close" :width="18" />
-                </span>
-              </label>
-              <div style="height: 8px"></div>
-              <label for="" class="re-password">
-                <input
-                  type="password"
-                  placeholder="请再次输入密码"
-                  name="blur"
-                  v-model="userInfo.rePassword"
-                  maxlength="20"
-                  minlength="8"
-                  autocomplete="new-password"
-                />
-                <span
-                  class="clear-icon"
-                  v-if="userInfo.rePassword"
-                  @click="userInfo.rePassword = ''"
-                >
-                  <Icon icon="ci:off-outline-close" :width="18" />
-                </span>
-              </label>
-              <div style="height: 8px"></div>
-              <label for="" class="auth-code">
-                <input
-                  type="text"
-                  placeholder="请输入验证码"
-                  autocomplete="off"
-                  v-model="verificationCodeCom"
-                  maxlength="6"
-                />
-                <span
-                  class="code-button"
-                  @click="getCode"
-                  :class="{ active: isOk == 1 }"
-                  >{{ verificationCodeText }}</span
-                >
-              </label>
-              <!--              <div class="err-msg"></div>-->
-              <button
-                type="button"
-                @click="onRegister"
-                class="submit"
-                :class="{ active: isRegisterActive }"
+                  注册
+                </button>
+              </form>
+            </div>
+            <div class="login-tip">
+              <span>已有账号？</span>
+              <span class="login-link" @click="isRegisterVisible = false"
+                >点此登录</span
               >
-                注册
-              </button>
-            </form>
+            </div>
           </div>
-          <div class="login-tip">
-            <span>已有账号？</span>
-            <span class="login-link" @click="isRegisterVisible = false"
-              >点此登录</span
-            >
+          <div v-else class="login-form">
+            <div class="title">电子邮箱登录</div>
+            <div class="prompt" style="margin-top: 10px">
+              请输入您的电子邮件地址和密码以登录
+            </div>
+            <div class="input-container" style="padding: 16px 0">
+              <form action="">
+                <label for="" class="email">
+                  <input
+                    type="text"
+                    placeholder="请输入邮箱"
+                    name="blur"
+                    autofocus
+                    autocomplete="username"
+                    v-model="userInfoEmail"
+                    maxlength="25"
+                    ref="email"
+                  />
+                  <span
+                    class="clear-icon"
+                    v-if="userInfoEmail"
+                    @click="userStore.userInfo.email = ''"
+                  >
+                    <Icon icon="ci:off-outline-close" :width="18" />
+                  </span>
+                </label>
+                <div style="height: 20px"></div>
+                <label for="" class="password">
+                  <input
+                    type="password"
+                    placeholder="请输入密码"
+                    name="blur"
+                    v-model="userStore.password"
+                    maxlength="20"
+                    minlength="8"
+                    autocomplete="new-password"
+                  />
+                  <span
+                    class="clear-icon"
+                    v-if="userStore.password"
+                    @click="userStore.password = ''"
+                  >
+                    <Icon icon="ci:off-outline-close" :width="18" />
+                  </span>
+                </label>
+                <div style="height: 20px"></div>
+
+                <!--              <div class="err-msg"></div>-->
+                <button
+                  type="button"
+                  @click="onLogin"
+                  class="submit"
+                  :class="{ active: isLoginActive }"
+                >
+                  登录
+                </button>
+              </form>
+            </div>
+            <div class="oauth-tip">
+              <span class="oauth-tip-line">或</span>
+            </div>
+            <div class="login-tip">
+              <span>还没有账号？</span>
+              <span class="login-link" @click="isRegisterVisible = true"
+                >点此注册</span
+              >
+            </div>
           </div>
-          <!--          <div class="oauth-tip">-->
-          <!--            <span class="oauth-tip-line">或</span>-->
-          <!--          </div>-->
-          <!--          <div class="login">-->
-          <!--            <div class="login-common">-->
-          <!--              <Icon-->
-          <!--                style="margin-right: 4px"-->
-          <!--                icon="mdi:wechat"-->
-          <!--                :width="18"-->
-          <!--                color="#07C160"-->
-          <!--              />-->
-          <!--              微信登录-->
-          <!--            </div>-->
-          <!--          </div>-->
-        </div>
+        </transition>
       </div>
     </div>
   </div>
@@ -387,7 +522,8 @@ div.reds-modal-open {
     color: @color-secondary-label;
   }
 
-  .register-form {
+  .register-form,
+  .login-form {
     width: 400px;
     display: flex;
     align-items: center;
@@ -545,4 +681,13 @@ div.reds-modal-open {
     }
   }
 }
+//.fade-enter-active,
+//.fade-leave-active {
+//  //transform: all 0.2s;
+//  transition: all 2s;
+//}
+//.fade-enter,
+//.fade-leave-to {
+//  opacity: 0;
+//}
 </style>
