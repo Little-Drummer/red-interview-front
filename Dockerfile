@@ -19,6 +19,5 @@ RUN pnpm install
 COPY . .
 
 # 构建项目
-RUN pnpm run build
+RUN pnpm run build-only
 
-RUN ls
