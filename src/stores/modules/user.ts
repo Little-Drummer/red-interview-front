@@ -5,7 +5,8 @@ export const useUserStore = defineStore('user', () => {
   const token = ref('')
   const userInfo = ref({
     email: '',
-    password: ''
+    password: '',
+    phone:""
   })
   const isLogin = ref(false)
   const loginDialogVisible = ref(false)

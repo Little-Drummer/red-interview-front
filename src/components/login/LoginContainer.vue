@@ -65,7 +65,7 @@ watchEffect(() => {
                 >
               </label>
               <div class="err-msg"></div>
-              <button @click="submit" class="submit">注册</button>
+              <button  class="submit">注册</button>
             </form>
           </div>
           <div class="login-tip">
