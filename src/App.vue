@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MainLayout from '@/views/layout/MainLayout.vue'
 
-console.log("jenkins测试2")
+console.log("jenkins测试3")
 </script>
 
 <template>
