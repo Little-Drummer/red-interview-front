@@ -18,17 +18,17 @@ watch(
 )
 
 const channelList = [
-  { channel_name: '推荐', channel_id: 'homefeed_recommend' },
-  { channel_name: '穿搭', channel_id: 'homefeed.fashion_v3' },
-  { channel_name: '美食', channel_id: 'homefeed.food_v3' },
-  { channel_name: '彩妆', channel_id: 'homefeed.cosmetics_v3' },
-  { channel_name: '影视', channel_id: 'homefeed.movie_and_tv_v3' },
-  { channel_name: '职场', channel_id: 'homefeed.career_v3' },
-  { channel_name: '情感', channel_id: 'homefeed.love_v3' },
-  { channel_name: '家居', channel_id: 'homefeed.household_product_v3' },
-  { channel_name: '游戏', channel_id: 'homefeed.gaming_v3' },
-  { channel_name: '旅行', channel_id: 'homefeed.travel_v3' },
-  { channel_name: '健身', channel_id: 'homefeed.fitness_v3' }
+  { channel_name: '推荐', channel_id: 'homefeed_recommend' }
+  // { channel_name: '穿搭', channel_id: 'homefeed.fashion_v3' },
+  // { channel_name: '美食', channel_id: 'homefeed.food_v3' },
+  // { channel_name: '彩妆', channel_id: 'homefeed.cosmetics_v3' },
+  // { channel_name: '影视', channel_id: 'homefeed.movie_and_tv_v3' },
+  // { channel_name: '职场', channel_id: 'homefeed.career_v3' },
+  // { channel_name: '情感', channel_id: 'homefeed.love_v3' },
+  // { channel_name: '家居', channel_id: 'homefeed.household_product_v3' },
+  // { channel_name: '游戏', channel_id: 'homefeed.gaming_v3' },
+  // { channel_name: '旅行', channel_id: 'homefeed.travel_v3' },
+  // { channel_name: '健身', channel_id: 'homefeed.fitness_v3' }
 ]
 
 const change_channel = (channel_id: string) => {

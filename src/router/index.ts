@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ExploreView from '@/views/ExploreView.vue'
+import PostDetail from '@/views/posts/PostDetail.vue'
 import { useUserStore } from '@/stores/modules/user.ts'
 // import { useMiscStore } from '@/stores/modules/misc.ts'
 
@@ -27,7 +28,7 @@ const router = createRouter({
     {
       path: '/explore/:postId',
       name: 'postDetail',
-      component: () => import('../views/posts/PostDetail.vue')
+      component: PostDetail
     },
     {
       path: '/user/profile/:userId',

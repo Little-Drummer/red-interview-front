@@ -3,8 +3,8 @@ import { ElMessage } from 'element-plus'
 import type { ResultType } from '@/type/resultType.ts'
 import type { AxiosResponse } from 'axios'
 
-const baseURL = 'https://redinterview.yjxw.win/api' // nginx代理
-// const baseURL = '/api' // nginx代理
+// const baseURL = 'https://redinterview.yjxw.win/api' // nginx代理
+const baseURL = '/api' // nginx代理
 
 const instance = axios.create({
   // 基础地址，超时时间

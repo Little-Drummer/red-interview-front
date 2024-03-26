@@ -5,6 +5,7 @@ import FeedsFooter from '@/components/explore/waterfall/footer/FeedsFooter.vue'
 import CoverImage from '@/components/explore/waterfall/CoverImage.vue'
 import PostDetail from '@/views/posts/PostDetail.vue'
 import PostMask from '@/components/explore/PostMask.vue'
+// const PostDetail = () => import('@/views/posts/PostDetail.vue')
 
 const sectionRef = ref()
 const coverImageRef = ref()
